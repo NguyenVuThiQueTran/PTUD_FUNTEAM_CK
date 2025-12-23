@@ -1,0 +1,8 @@
+/* Placeholder all.min.css — chứa thông báo hướng dẫn cài đặt
+   Bạn nên thay file này bằng file `all.min.css` thực tế từ bản Font Awesome Free.
+   Nếu bạn để nguyên placeholder, các class `.fa` sẽ không hiển thị biểu tượng.
+*/
+.fa { display: inline-block; font-style: normal; }
+.fas, .fa { font-family: 'Font Awesome 5 Free'; font-weight: 900; }
+/* Minimal fallback to avoid console errors if CSS is requested but webfonts missing */
+.fa::before { content: "\26AA"; /* small dot as fallback */ }

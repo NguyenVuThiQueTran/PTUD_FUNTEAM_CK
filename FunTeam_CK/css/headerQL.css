@@ -1,0 +1,170 @@
+
+        /* Thanh đầu trang màu xám có logo */
+        .topbar {
+            width: 100%;
+            background-color: #f2f2f2;
+            padding: 10px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .topbar-left img {
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .site-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .topbar-right a {
+            margin-left: 20px;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .topbar-right a:hover {
+            color: #007bff;
+        }
+
+        /* CSS cho banner và thanh chức năng */
+        .banner-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .banner-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+        }
+
+        .banner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .banner-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .banner-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            max-width: 600px;
+        }
+
+        .functions-container {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            background-color: #0b29a4;
+            padding: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .function-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .function-item:hover {
+            transform: translateY(-5px);
+            color: #ffd700;
+        }
+
+        .function-icon {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .function-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .search-box {
+            background-color: white;
+            border-radius: 50px;
+            padding: 10px 25px;
+            display: flex;
+            align-items: center;
+            width: 80%;
+            min-width: 200px;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            flex: 1;
+            padding: 10px 0;
+            font-size: 16px;
+        }
+
+        .search-box button {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .search-box button:hover {
+            background-color: #ff5252;
+        }
+
+        @media (max-width: 768px) {
+            .functions-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .function-item {
+                width: 80%;
+            }
+
+            .banner-title {
+                font-size: 2rem;
+            }
+
+            .banner-subtitle {
+                font-size: 1rem;
+            }
+        }

@@ -1,0 +1,122 @@
+.container{
+    box-shadow: 0.5px 0.5px 2px 2px rgb(197, 197, 197);
+    margin-bottom:30px;
+}
+.container:hover{
+    transform:scale(1.1);
+    transition:transform 1.0s ease;
+}
+img{
+    width:100%;
+}
+.product-name {
+    font-size: 14px;
+    line-height: 20px;
+    margin-top: 0;
+    color: #1c1c1c;
+    font-weight: 400;
+    height: 40px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+.product-price {
+    color: #49a942;
+    font-size: 1.07143em;
+    line-height: 1.71429em;
+    display: block;
+    font-weight: 600;
+    float:left;
+}
+/*.a-center {
+    text-align: center !important;
+}*/
+.product-info {
+    z-index: 10;
+    position: relative;
+    padding: 0px 0px;
+}
+.product-info .product-name a{
+    color: #1c1c1c;
+    text-decoration: none;
+    float:left;
+}
+.btn-cart {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-cart i {
+    font-size: 24px;
+    color: #f39c12; /* Ví dụ màu vàng */
+}
+
+.cart-box button {
+    margin:auto;
+    display: block;
+    border: none;
+    width: 3rem;
+    height: 3rem;
+    background-color: hsla(0, 0%, 100%, .8);
+    box-shadow: 0 5px 10px hsla(0, 0%, 61%, .22);
+    -webkit-box-shadow: 0 5px 10px hsla(0, 0%, 61%, .22);
+    border-radius: 4px;
+    /*background-repeat: no-repeat;
+    background-position: 50% 50%;*/
+    float:right;
+}
+.zoom-img {
+    transition: transform 0.5s ease, opacity 0.5s ease; /* Hiệu ứng lướt qua sẽ mượt */
+    opacity: 1; /* Đảm bảo hình ảnh hiển thị bình thường */
+}
+
+.zoom-img:hover {
+    transform: translateX(-20px); /* Hình ảnh sẽ lướt qua bên phải 20px khi hover */
+    opacity: 0.8; /* Làm cho ảnh hơi mờ khi hover */
+}
+
+.lbl-rating {
+    font-size: 13px;
+    float:left;
+}
+
+.icon::before {
+    content: "\2605"; /* Biểu tượng ngôi sao Unicode */
+    color: #f39c12;
+    margin-right: 5px;
+}
+.border-col:hover{
+    background-color: hsla(0, 0%, 100%, .8);
+    box-shadow: 0 5px 10px hsla(0, 0%, 61%, .22);
+    -webkit-box-shadow: 0 5px 10px hsla(0, 0%, 61%, .22);
+    transform:scale(1.1);
+    transition: transform 0.5s ease;
+}
+.section-title-all {
+    position: relative;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 15px;
+    
+}
+
+.section-title-all p {
+    max-width: 50%;
+    margin: 10px auto;
+    color: #333;
+}
+.section-title-all img {
+    max-width: 80%;
+    margin: 10px auto;
+}
+.submenu{
+    border:none;
+    border-radius:0;
+    margin-left:10px;
+}
+.category-title{
+    text-transform: uppercase;
+    color:maroon;
+    font-size: 20px;;
+}

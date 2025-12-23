@@ -1,0 +1,53 @@
+.bg-image{
+    background-image: url('../img/nen.jpg');
+    background-size: cover; /* Làm cho hình ảnh bao phủ toàn bộ màn hình */
+    background-repeat: no-repeat; /* Không lặp lại hình ảnh */
+    background-position: center center; /* Căn giữa hình ảnh */
+}
+.bg-form{
+    background-color: rgb(252, 247, 242,1.2);
+}
+.form {
+    padding: 80px;
+    margin-top:35px;
+    margin-bottom:30px;
+    border-radius: 10px;
+}
+
+@media(max-width: 996px) {
+    .form {
+        width: 100% !important;
+        padding: 20px;
+    }
+}
+
+.form-input {
+    padding: 10px;
+}
+
+.alter {
+    width: fit-content;
+    display: block;
+    padding: 0 4px;
+    margin-inline: auto;
+    background-color: rgb(252, 247, 242,1.2);
+    position: relative;
+    z-index: 2;
+}
+
+.alter-line {
+    top: -10px;
+}
+
+.social-btn {
+    border: 1px solid #ccc;
+    border-radius: 80px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.text-main {
+    color: #000;
+}

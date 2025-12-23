@@ -1,0 +1,12 @@
+.footer__list .footer__item{
+    list-style-type: none;
+}
+.footer__list .footer__item .footer__link{
+    text-decoration: none;
+    color:white;
+}
+.footer__list .footer__item .footer__link:hover{
+    color:orange;
+}
+/* Footer */
+

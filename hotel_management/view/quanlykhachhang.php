@@ -1,19 +1,17 @@
-<div class="d-flex justify-content-between mb-3">
-  <h1>Quản lý Khách hàng</h1>
-  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#khachHangModal">Thêm khách hàng</button>
+<div class="d-flex justify-content-between mb-3 align-items-center">
+  <h2 class="fw-bold text-dark"><i class="fas fa-users me-2"></i>Quản Lý Khách Hàng</h2>
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#khachHangModal" id="btnThemKH">
+      <i class="fas fa-plus me-2"></i>Thêm khách hàng
+  </button>
 </div>
 
 <?php global $dsKhachHang; ?>
 
-<!-- DEBUG OUTPUT -->
-
-<div class="card mb-3">
-<!-- (debug messages removed) -->
-
+<div class="card mb-3 shadow-sm border-0">
   <div class="card-body">
     <div class="row">
       <div class="col-md-10">
-        <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm theo tên khách hàng...">
+        <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm theo tên, email, sdt...">
       </div>
       <div class="col-md-2">
         <button class="btn btn-secondary w-100" id="showAllBtn">Hiển thị tất cả</button>
@@ -22,49 +20,60 @@
   </div>
 </div>
 
-<div class="card">
-  <div class="card-body">
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
     <div class="table-responsive">
-      <table class="table table-bordered" id="tableKhachHang">
-      <style>
-        /* Force table text to dark in case site CSS sets it to white */
-        #tableKhachHang tbody td { color: #000 !important; }
-      </style>
-
+      <table class="table table-hover table-bordered mb-0 align-middle" id="tableKhachHang">
+      
       <thead class="table-dark">
         <tr>
-          <th>Mã KH</th>
-          <th>Họ tên</th>
-          <th>Email</th>
-          <th>Điện thoại</th>
-          <th>Hành động</th>
+          <th class="py-3 ps-3">Mã KH</th>
+          <th class="py-3">Họ tên</th>
+          <th class="py-3">CCCD</th>
+          <th class="py-3">Email</th>
+          <th class="py-3">Điện thoại</th>
+          <th class="py-3 text-center" style="width: 150px;">Hành động</th>
         </tr>
       </thead>
       <tbody>
         <?php if(!empty($dsKhachHang)): ?>
-          <?php foreach($dsKhachHang as $kh): ?>
-          <tr data-makh="<?php echo htmlspecialchars($kh['MaKH'], ENT_QUOTES, 'UTF-8'); ?>">
-            <td><?php echo htmlspecialchars($kh['MaKH'], ENT_QUOTES); ?></td>
-            <td><?php echo htmlspecialchars($kh['HoTen'], ENT_QUOTES, 'UTF-8'); ?></td>
-            <td><?php echo htmlspecialchars($kh['Email'], ENT_QUOTES, 'UTF-8'); ?></td>
-            <td><?php echo htmlspecialchars($kh['DienThoai'], ENT_QUOTES, 'UTF-8'); ?></td>
-             <!-- Simplified: Just echo values -->
-             <!-- MaKH: <?= isset($kh['MaKH']) ? 'isset' : 'not set' ?> -->
-            <td>
-              <button class="btn btn-warning btn-sm btn-sua-kh" 
+          <?php foreach($dsKhachHang as $kh): 
+              $id = isset($kh['idKH']) ? $kh['idKH'] : (isset($kh['MaKH']) ? $kh['MaKH'] : '');
+              $ten = isset($kh['hoTen']) ? $kh['hoTen'] : (isset($kh['HoTen']) ? $kh['HoTen'] : '');
+              $email = isset($kh['email']) ? $kh['email'] : (isset($kh['Email']) ? $kh['Email'] : '');
+              
+              $sdt = '';
+              if(isset($kh['soDienThoai'])) $sdt = $kh['soDienThoai'];
+              elseif(isset($kh['SoDienThoai'])) $sdt = $kh['SoDienThoai'];
+              elseif(isset($kh['DienThoai'])) $sdt = $kh['DienThoai'];
+
+              $cccd = isset($kh['CCCD']) ? $kh['CCCD'] : (isset($kh['cccd']) ? $kh['cccd'] : '');
+          ?>
+          <tr data-makh="<?php echo htmlspecialchars($id); ?>">
+            <td class="ps-3 text-center"><?php echo htmlspecialchars($id); ?></td>
+            <td class="text-dark"><?php echo htmlspecialchars($ten); ?></td>
+            <td><?php echo htmlspecialchars($cccd); ?></td>
+            <td><?php echo htmlspecialchars($email); ?></td>
+            <td><?php echo htmlspecialchars($sdt); ?></td>
+            
+            <td class="text-center">
+              <button class="btn btn-warning btn-sm btn-sua-kh me-1" 
                   data-bs-toggle="modal" data-bs-target="#khachHangModal"
-          data-makh="<?php echo htmlspecialchars($kh['MaKH'], ENT_QUOTES, 'UTF-8'); ?>" 
-          data-hoten="<?php echo htmlspecialchars($kh['HoTen'], ENT_QUOTES, 'UTF-8'); ?>" 
-          data-email="<?php echo htmlspecialchars($kh['Email'], ENT_QUOTES, 'UTF-8'); ?>" 
-          data-dienthoai="<?php echo htmlspecialchars($kh['DienThoai'], ENT_QUOTES, 'UTF-8'); ?>">Sửa</button>
-        <button class="btn btn-danger btn-sm btn-xoa-kh" data-makh="<?php echo htmlspecialchars($kh['MaKH'], ENT_QUOTES); ?>">Xóa</button>
+                  data-makh="<?php echo htmlspecialchars($id); ?>" 
+                  data-hoten="<?php echo htmlspecialchars($ten); ?>" 
+                  data-email="<?php echo htmlspecialchars($email); ?>" 
+                  data-sdt="<?php echo htmlspecialchars($sdt); ?>"
+                  data-cccd="<?php echo htmlspecialchars($cccd); ?>">
+                  Sửa
+              </button>
+              <button class="btn btn-danger btn-sm btn-xoa-kh" data-makh="<?php echo htmlspecialchars($id); ?>">
+                  Xóa
+              </button>
             </td>
           </tr>
           <?php endforeach; ?>
         <?php else: ?>
-          <tr>
-            <td colspan="5" class="text-center">Không có dữ liệu</td>
-          </tr>
+          <tr><td colspan="6" class="text-center py-4">Không có dữ liệu hiển thị</td></tr>
         <?php endif; ?>
       </tbody>
       </table>
@@ -72,30 +81,40 @@
   </div>
 </div>
 
-<!-- Modal thêm/sửa khách hàng -->
 <div class="modal fade" id="khachHangModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
+      
+      <div class="modal-header"> 
+        <h5 class="modal-title fw-bold text-dark" id="khachHangModalLabel">Thêm khách hàng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
       <form id="khachHangForm">
-        <div class="modal-header">
-          <h5 class="modal-title" id="khachHangModalLabel">Thêm khách hàng</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
         <div class="modal-body">
           <input type="hidden" id="form_MaKH" name="maKH">
+          
           <div class="mb-3">
-            <label>Họ tên</label>
+            <label class="form-label fw-bold">Họ tên</label>
             <input type="text" id="form_HoTen" name="hoTen" class="form-control" required>
           </div>
+          
           <div class="mb-3">
-            <label>Email</label>
-            <input type="email" id="form_Email" name="email" class="form-control" required>
+            <label class="form-label fw-bold">CCCD</label>
+            <input type="text" id="form_CCCD" name="cccd" class="form-control" required placeholder="Nhập số căn cước">
           </div>
+
           <div class="mb-3">
-            <label>Điện thoại</label>
-            <input type="text" id="form_DienThoai" name="dienThoai" class="form-control" required>
+            <label class="form-label fw-bold">Email</label>
+            <input type="email" id="form_Email" name="email" class="form-control">
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label fw-bold">Điện thoại</label>
+            <input type="text" id="form_DienThoai" name="dienThoai" class="form-control" required pattern="[0-9]{10}" title="Vui lòng nhập đúng 10 chữ số">
           </div>
         </div>
+        
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
           <button type="submit" class="btn btn-primary">Lưu</button>
@@ -104,11 +123,11 @@
     </div>
   </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+// Tìm kiếm nhanh
 document.addEventListener('DOMContentLoaded', function(){
-
-  // Tìm kiếm khách hàng
   const searchInput = document.getElementById('searchInput');
   const showAllBtn = document.getElementById('showAllBtn');
   const tableKhachHang = document.getElementById('tableKhachHang');
@@ -117,25 +136,12 @@ document.addEventListener('DOMContentLoaded', function(){
     searchInput.addEventListener('keyup', function(){
         const searchValue = this.value.toLowerCase();
         const rows = tableKhachHang.querySelectorAll('tbody tr');
-        
         rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            if(cells.length > 0) {
-                const hoTen = cells[1].textContent.toLowerCase();
-                const email = cells[2].textContent.toLowerCase();
-                const dienThoai = cells[3].textContent.toLowerCase();
-                
-                if(hoTen.includes(searchValue) || email.includes(searchValue) || dienThoai.includes(searchValue)){
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            }
+            if(row.textContent.toLowerCase().includes(searchValue)) row.style.display = '';
+            else row.style.display = 'none';
         });
     });
   }
-
-  // Hiển thị tất cả
   if(showAllBtn) {
     showAllBtn.addEventListener('click', function(){
         if(searchInput) searchInput.value = '';
@@ -143,85 +149,65 @@ document.addEventListener('DOMContentLoaded', function(){
         rows.forEach(row => row.style.display = '');
     });
   }
-
 });
 
-// Kiểm tra xem jQuery có load không, nếu có thì dùng jQuery
-if(typeof jQuery !== 'undefined') {
-  var $ = jQuery;
-  $(document).ready(function(){
+$(document).ready(function(){
+    // Reset Form khi bấm Thêm
+    $('#btnThemKH').click(function(){
+        $('#khachHangForm')[0].reset();
+        $('#form_MaKH').val('');
+        $('#khachHangModalLabel').text('Thêm khách hàng mới');
+    });
 
-    // Thêm / Sửa khách hàng
+    // Đổ dữ liệu khi bấm Sửa
+    $(document).on('click', '.btn-sua-kh', function(){
+        $('#form_MaKH').val($(this).data('makh'));
+        $('#form_HoTen').val($(this).data('hoten'));
+        $('#form_Email').val($(this).data('email'));
+        $('#form_DienThoai').val($(this).data('sdt'));
+        $('#form_CCCD').val($(this).data('cccd'));
+        $('#khachHangModalLabel').text('Cập nhật khách hàng');
+    });
+
+    // Submit Form
     $('#khachHangForm').on('submit', function(e){
         e.preventDefault();
         var maKH = $('#form_MaKH').val();
-        var actionType = (maKH)?'suaKhachHang':'themKhachHang';
+        var actionType = (maKH) ? 'suaKhachHang' : 'themKhachHang';
+        
         $.ajax({
             url:'controller/khachhangController.php',
             type:'POST',
             data: $(this).serialize()+'&action='+actionType,
             dataType:'json',
             success:function(res){
-                if(res.success){
-                    alert(res.message);
-                    let row = `<tr data-makh="${res.data.MaKH}">
-                        <td>${res.data.MaKH}</td>
-                        <td>${res.data.HoTen}</td>
-                        <td>${res.data.Email}</td>
-                        <td>${res.data.DienThoai}</td>
-                        <td>
-                          <button class="btn btn-warning btn-sm btn-sua-kh" data-bs-toggle="modal" data-bs-target="#khachHangModal"
-                              data-makh="${res.data.MaKH}" data-hoten="${res.data.HoTen}" 
-                              data-email="${res.data.Email}" data-dienthoai="${res.data.DienThoai}">Sửa</button>
-                          <button class="btn btn-danger btn-sm btn-xoa-kh" data-makh="${res.data.MaKH}">Xóa</button>
-                        </td>
-                    </tr>`;
-                    if(maKH) $('#tableKhachHang tbody tr[data-makh="'+maKH+'"]').replaceWith(row);
-                    else $('#tableKhachHang tbody').append(row);
-                    $('#khachHangModal').modal('hide');
-                } else alert('Lỗi: '+res.message);
+                var resp = (typeof res === 'object') ? res : JSON.parse(res);
+                if(resp.success){
+                    alert(resp.message);
+                    location.reload(); 
+                } else {
+                    alert(resp.message);
+                }
+            },
+            error: function() {
+                alert("Lỗi kết nối hoặc lỗi server!");
             }
         });
     });
 
-    // Xóa khách hàng
-    $('#tableKhachHang').on('click','.btn-xoa-kh', function(){
+    // Xóa
+    $(document).on('click', '.btn-xoa-kh', function(){
         var maKH = $(this).data('makh');
         if(confirm('Bạn có chắc chắn muốn xóa?')){
-            $.ajax({
-                url: 'controller/khachhangController.php',
-                type: 'POST',
-                data: { action: 'xoaKhachHang', maKH: maKH },
-                dataType: 'json',
-                success: function(res){
-                    if(res.success){
-                        alert(res.message);
-                        $('tr[data-makh="'+maKH+'"]').remove();
-                    } else {
-                        alert('Lỗi: ' + res.message);
-                    }
-                },
-                error: function(){
-                    alert('Lỗi kết nối. Không thể xóa.');
+            $.post('controller/khachhangController.php', { action: 'xoaKhachHang', maKH: maKH }, function(res){
+                var resp = (typeof res === 'object') ? res : JSON.parse(res);
+                if(resp.success){
+                    $('tr[data-makh="'+maKH+'"]').remove();
+                } else {
+                    alert('Lỗi: ' + resp.message);
                 }
             });
         }
     });
-
-    // Khi mở modal sửa, điền dữ liệu
-    $('#tableKhachHang').on('click','.btn-sua-kh', function(){
-        $('#form_MaKH').val($(this).data('makh'));
-        $('#form_HoTen').val($(this).data('hoten'));
-        $('#form_Email').val($(this).data('email'));
-        $('#form_DienThoai').val($(this).data('dienthoai'));
-        $('#khachHangModalLabel').text('Sửa khách hàng');
-    });
-
-    // Khi nhấn thêm mới
-    $('#khachHangModal').on('show.bs.modal', function(){
-        if(!$('#form_MaKH').val()) $('#khachHangModalLabel').text('Thêm khách hàng');
-    });
-
-  });
-}
+});
 </script>

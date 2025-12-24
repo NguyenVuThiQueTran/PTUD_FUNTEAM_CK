@@ -54,8 +54,8 @@ class cKhachHang {
         
         if (empty($matKhau)) {
             $errors[] = "Vui lòng nhập mật khẩu!";
-        } elseif (strlen($matKhau) < 6) {
-            $errors[] = "Mật khẩu phải có ít nhất 6 ký tự!";
+        } elseif (strlen($matKhau) < 4) {
+            $errors[] = "Mật khẩu phải có ít nhất 4 ký tự!";
         }
         
         if ($matKhau !== $xacNhanMatKhau) {

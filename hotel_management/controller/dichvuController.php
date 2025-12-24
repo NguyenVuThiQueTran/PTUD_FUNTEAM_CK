@@ -9,11 +9,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
     $maDV = "DV".rand(100,999);
     $loaiDV = isset($_POST['loaiDV']) ? $_POST['loaiDV'] : 'Tiện ích';
+    $donGia = $_POST['donGia'];
+
+    // RÀNG BUỘC GIÁ > 0
+    if (!is_numeric($donGia) || $donGia <= 0) {
+        echo json_encode(array('success' => false, 'message' => 'Lỗi: Giá dịch vụ phải lớn hơn 0!'));
+        exit;
+    }
     
     try {
         $sql = "INSERT INTO dichvu (maDV, tenDV, loaiDV, donGia, moTa, trangThai) VALUES (?, ?, ?, ?, ?, 'HoatDong')";
         $stmt = $conn->prepare($sql);
-        $stmt->execute(array($maDV, $_POST['tenDV'], $loaiDV, $_POST['donGia'], $_POST['moTa']));
+        $stmt->execute(array($maDV, $_POST['tenDV'], $loaiDV, $donGia, $_POST['moTa']));
         echo json_encode(array('success'=>true, 'message'=>'Thêm dịch vụ thành công!'));
     } catch (Exception $e) {
         echo json_encode(array('success'=>false, 'message'=>'Lỗi SQL'));
@@ -35,6 +42,12 @@ if(isset($_POST['action'])){
         $donGia = trim($_POST['donGia']);
         $moTa = trim($_POST['moTa']);
 
+        // RÀNG BUỘC GIÁ > 0
+        if (!is_numeric($donGia) || $donGia <= 0) {
+            echo json_encode(array('success' => false, 'message' => 'Lỗi: Giá dịch vụ phải lớn hơn 0!'));
+            exit;
+        }
+
         if($dichVuModel->existsByTenDV($tenDV)){
             echo json_encode(array('success'=>false,'message'=>'Tên dịch vụ đã tồn tại')); exit;
         }
@@ -49,7 +62,15 @@ if(isset($_POST['action'])){
     }
     
     if($action == 'suaDichVu') {
-        if($dichVuModel->suaDichVu($_POST['maDV'], $_POST['tenDV'], $_POST['donGia'], $_POST['moTa'])) {
+        $donGia = trim($_POST['donGia']);
+
+        // RÀNG BUỘC GIÁ > 0
+        if (!is_numeric($donGia) || $donGia <= 0) {
+            echo json_encode(array('success' => false, 'message' => 'Lỗi: Giá dịch vụ phải lớn hơn 0!'));
+            exit;
+        }
+
+        if($dichVuModel->suaDichVu($_POST['maDV'], $_POST['tenDV'], $donGia, $_POST['moTa'])) {
             echo json_encode(array('success'=>true, 'message'=>'Cập nhật thành công'));
         } else {
             echo json_encode(array('success'=>false, 'message'=>'Cập nhật thất bại'));

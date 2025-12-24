@@ -212,7 +212,7 @@ function xacNhan(){
 
     if(!ok) return;
 
-    fetch("/PTUD_FunTeam-main/controller/datphong.php",{
+    fetch("../../controller/datphong.php",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({

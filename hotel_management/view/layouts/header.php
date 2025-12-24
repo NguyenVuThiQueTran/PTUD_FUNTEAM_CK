@@ -42,9 +42,12 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item"><a class="nav-link <?php echo (!isset($_GET['page'])||$_GET['page']=='home')?'active':''; ?>" href="dashboard.php"><i class="fas fa-home nav-icon"></i><span>Trang Chủ</span></a></li>
                 <li class="nav-item"><a class="nav-link <?php echo (isset($_GET['page'])&&$_GET['page']=='phong')?'active':''; ?>" href="dashboard.php?page=phong"><i class="fas fa-bed nav-icon"></i><span>Quản lý Phòng</span></a></li>
-                <li class="nav-item"><a class="nav-link <?php echo (isset($_GET['page'])&&$_GET['page']=='khachhang')?'active':''; ?>" href="dashboard.php?page=khachhang"><i class="fas fa-users nav-icon"></i><span>Khách Hàng</span></a></li>
-                <li class="nav-item"><a class="nav-link <?php echo (isset($_GET['page'])&&$_GET['page']=='dichvu')?'active':''; ?>" href="dashboard.php?page=dichvu"><i class="fas fa-concierge-bell nav-icon"></i><span>Dịch Vụ</span></a></li>
-                <li class="nav-item"><a class="nav-link <?php echo (isset($_GET['page'])&&$_GET['page']=='nhanvien')?'active':''; ?>" href="dashboard.php?page=nhanvien"><i class="fas fa-user-tie nav-icon"></i><span>Nhân Sự</span></a></li>
+                <li class="nav-item"><a class="nav-link <?php echo (isset($_GET['page'])&&$_GET['page']=='khachhang')?'active':''; ?>" href="dashboard.php?page=khachhang"><i class="fas fa-users nav-icon"></i><span>Quản lý Khách Hàng</span></a></li>
+                <li class="nav-item"><a class="nav-link <?php echo (isset($_GET['page'])&&$_GET['page']=='dichvu')?'active':''; ?>" href="dashboard.php?page=dichvu"><i class="fas fa-concierge-bell nav-icon"></i><span>Quản lý Dịch Vụ</span></a></li>
+                
+                <li class="nav-item"><a class="nav-link <?php echo (isset($_GET['page'])&&$_GET['page']=='khuyenmai')?'active':''; ?>" href="dashboard.php?page=khuyenmai"><i class="fas fa-tags nav-icon"></i><span>Quản lý Khuyến Mãi</span></a></li>
+                
+                <li class="nav-item"><a class="nav-link <?php echo (isset($_GET['page'])&&$_GET['page']=='nhanvien')?'active':''; ?>" href="dashboard.php?page=nhanvien"><i class="fas fa-user-tie nav-icon"></i><span>Quản lý Nhân Sự</span></a></li>
             </ul>
             <div class="d-flex align-items-center mt-3 mt-lg-0 user-section">
                 <div class="dropdown">

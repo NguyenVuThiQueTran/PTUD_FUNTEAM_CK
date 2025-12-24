@@ -11,7 +11,6 @@ $base_path = '/PTUD_FunTeam-main';
 if(isset($_POST['btnDangKy'])){
     $ten_doan = trim($_POST['ten_doan']);
     $truong_doan = trim($_POST['truong_doan']);
-    $cccd = trim($_POST['cccd']);
     $so_dien_thoai = trim($_POST['so_dien_thoai']);
     $so_luong_thanh_vien = intval($_POST['so_luong_thanh_vien']);
     
@@ -20,39 +19,10 @@ if(isset($_POST['btnDangKy'])){
     } else {
         $thanh_vien = array();
     }
-    
-    // 1. Kiểm tra sdt 
-    $clean_phone = preg_replace('/[^0-9]/', '', $so_dien_thoai);
-    if(strlen($clean_phone) < 10 || strlen($clean_phone) > 11) {
-        $error = "Số điện thoại phải có 10-11 chữ số";
-    }
-    // 2. Kiểm tra cccd (chỉ kiểm tra nếu không có lỗi sdt)
-    else {
-        $invalidCCCDs = array();
-        if(count($thanh_vien) > 0) {
-            foreach($thanh_vien as $index => $tv){
-                $cccd = trim($tv['cccd']);
-                $clean_cccd = preg_replace('/[^0-9]/', '', $cccd);
-                if(strlen($clean_cccd) !== 12) {
-                    $invalidCCCDs[] = "";
-                }
-            }
-            
-            if(!empty($invalidCCCDs)) {
-                $error = "CCCD phải có đúng 12 số  " . implode(", ", $invalidCCCDs);
-            }
-        }
-    }
-    
-    // 3. Kiểm tra trường bắt buộc (chỉ kiểm tra nếu không có lỗi trước đó)
-    if($error == "") {
-        if($ten_doan == "" || $truong_doan == "" || $so_dien_thoai == "" || $so_luong_thanh_vien < 1){
-            $error = "Vui lòng điền đầy đủ thông tin.";
-        }
-    }
-    
-    // 4. Nếu tất cả validation đều pass, xử lý đăng ký
-    if($error == "") {
+
+    if($ten_doan == "" || $truong_doan == "" || $so_dien_thoai == "" || $so_luong_thanh_vien < 1){
+        $error = "Vui lòng điền đầy đủ thông tin.";
+    } else {
         include("../controller/cuser.php");
         include("../controller/cdoan.php");
 
@@ -68,8 +38,6 @@ if(isset($_POST['btnDangKy'])){
             $error = "Lỗi khi thêm đoàn!";
         } else {
             $successCount = 0;
-            $errorEmails = array(); // Khai báo biến này
-            
             foreach($thanh_vien as $tv){
                 $hoTen = trim($tv['ho_ten']);
                 $gmail = trim($tv['gmail']);
@@ -83,26 +51,20 @@ if(isset($_POST['btnDangKy'])){
                     // Lưu vào bảng ThanhVienDoan
                     $doan->themThanhVienDoan($maDoan, $idKH);
                     $successCount++;
-                } else {
-                    // Nếu đăng ký thất bại, có thể do email trùng
-                    $errorEmails[] = $gmail;
+                    // Gửi email mật khẩu (nếu muốn)
+                    // mail($gmail, "Mật khẩu đăng nhập", "Mật khẩu: $password");
                 }
             }
 
             if($successCount == $so_luong_thanh_vien){
-                $success = "Đăng ký thành công $successCount thành viên! Mật khẩu 1111.";
+                $success = "Đăng ký thành công $successCount thành viên! Mật khẩu đã gửi tới email.";
                 echo "<script>
                         setTimeout(function() {
-                            window.location.href = 'dashboard_letan.php';
+                            window.location.href = 'login.php';
                         }, 3000);
                       </script>";
-            } else if($successCount > 0){
-                $error = "Đăng ký thành công $successCount/$so_luong_thanh_vien thành viên.";
-                if(count($errorEmails) > 0) {
-                    $error .= " Các email sau đã tồn tại: " . implode(", ", $errorEmails);
-                }
             } else {
-                $error = "Không thể đăng ký thành viên. Email có thể đã tồn tại.";
+                $error = "Có lỗi khi lưu một số thành viên.";
             }
         }
     }
@@ -121,9 +83,6 @@ body, html {
     height: 100%; 
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow-y: auto; /* Cho phép cuộn */
-
-
 }
 body {
     display: flex;
@@ -256,7 +215,6 @@ body {
     display: block;
     font-size: 0.9rem;
 }
-
 </style>
 <script>
 function taoInputThanhVien() {
@@ -297,14 +255,18 @@ document.addEventListener('DOMContentLoaded', function(){
 </head>
 <body>
 <div class="card login-card">
-    
     <div class="card-body">
-        <div class="login-header d-flex align-items-center justify-content-between mb-4">
-            
-            <h4 class="fw-semibold"><i class="bi bi-people-fill me-2"></i>Đăng ký đoàn du lịch</h4>
-        <a href="dashboard_letan.php" class="btn btn-back d-flex align-items-center">
-                <i class="fas fa-arrow-left me-1"></i> X
-            </a>
+        <div class="login-header text-center">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-semibold mb-0">
+                <i class="bi bi-people-fill me-2"></i>Đăng ký đoàn du lịch
+            </h4>
+            <a href="dashboard.php" class="btn btn-danger btn-sm rounded-circle d-flex align-items-center justify-content-center" 
+       style="width: 36px; height: 36px; padding: 0; font-weight: bold; font-size: 1.2rem; text-decoration: none;"
+       title="Đóng">
+        X
+    </a>
+        </div>
         </div>
 
         <?php if($error != ""): ?>
@@ -331,11 +293,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 <input type="text" name="truong_doan" class="form-control" placeholder="Nhập tên trưởng đoàn" required 
                        value="<?php echo isset($_POST['truong_doan']) ? htmlspecialchars($_POST['truong_doan']) : ''; ?>">
             </div>
-            <div class="form-group">
-                <label>CCCD *</label>
-                <input type="text" name="cccd" class="form-control" placeholder="Nhập CCCD" required 
-                       value="<?php echo isset($_POST['cccd']) ? htmlspecialchars($_POST['cccd']) : ''; ?>">
-            </div>
+            
             <div class="form-group">
                 <label>Số điện thoại *</label>
                 <input type="text" name="so_dien_thoai" class="form-control" placeholder="Nhập số điện thoại" required 

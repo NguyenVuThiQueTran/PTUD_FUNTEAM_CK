@@ -317,12 +317,8 @@ function safeAlert($message) {
                                 </div>
                             </div>
                             
-                            <?php if (isset($chiTietDonDatPhong['hoaDon'])):
-                                 $hoaDon = $chiTietDonDatPhong['hoaDon'];
-    
-                                // Kiểm tra các trường cần thiết
-                                $hasValidHoaDon = isset($hoaDon['maHD']) && !empty($hoaDon['maHD']) ?>
-                                                            <div class="section-card">
+                            <?php if (isset($chiTietDonDatPhong['hoaDon']) && $chiTietDonDatPhong['hoaDon']): ?>
+                                <div class="section-card">
                                     <h4 class="section-title">
                                         <i class="fas fa-file-invoice-dollar me-2"></i>Thông tin hóa đơn
                                     </h4>

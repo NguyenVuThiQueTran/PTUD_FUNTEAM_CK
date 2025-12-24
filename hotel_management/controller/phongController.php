@@ -7,23 +7,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $db = new Database();
     $conn = $db->getConnection();
 
-    $soPhong = $_POST['soPhong'];
-    $maLoai = $_POST['hangPhong']; // Modal dashboard gửi name="hangPhong" chứa mã LP...
+    $soPhong = trim($_POST['soPhong']);
+    $maLoai = $_POST['hangPhong']; 
     $tang = $_POST['tangPhong'];
     $sucChua = !empty($_POST['sucChua']) ? $_POST['sucChua'] : 2;
-    $gia = !empty($_POST['giaPhong']) ? $_POST['giaPhong'] : 0;
+    $giaInput = !empty($_POST['giaPhong']) ? $_POST['giaPhong'] : 0;
 
-    // 1. Tự động tạo Mã phòng
-    $maPhong = "P" . $soPhong; 
+    // 1. Kiểm tra giá tiền
+    if (!empty($_POST['giaPhong']) && (!is_numeric($giaInput) || $giaInput <= 0)) {
+        echo json_encode(array('success' => false, 'message' => 'Lỗi: Giá phòng phải là số dương lớn hơn 0!'));
+        exit;
+    }
 
-    // 2. Mapping từ Mã loại sang Tên hạng phòng
+    // 2. [MỚI] Kiểm tra trùng Số phòng
+    $stmtCheck = $conn->prepare("SELECT COUNT(*) FROM phong WHERE soPhong = ?");
+    $stmtCheck->execute(array($soPhong));
+    if ($stmtCheck->fetchColumn() > 0) {
+        echo json_encode(array('success' => false, 'message' => 'Lỗi: Số phòng ' . $soPhong . ' đã tồn tại!'));
+        exit;
+    }
+
+    $gia = $giaInput;
+    $maPhong = "P" . $soPhong; // Tự động tạo mã
+
+    // Logic tên hạng phòng và giá mặc định
     $tenHang = "Standard";
     if ($maLoai == 'LP002') $tenHang = 'Superior';
     if ($maLoai == 'LP003') $tenHang = 'Deluxe';
     if ($maLoai == 'LP004') $tenHang = 'Suite';
     if ($maLoai == 'LP005') $tenHang = 'Family';
 
-    // 3. Xử lý giá mặc định nếu để trống
     if ($gia == 0) {
         if ($maLoai == 'LP001') $gia = 500000;
         elseif ($maLoai == 'LP002') $gia = 800000;
@@ -39,23 +52,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $stmt->execute(array($maPhong, $maLoai, $gia, $sucChua, $tang, $soPhong, $tenHang));
         echo json_encode(array('success' => true, 'message' => 'Thêm phòng thành công!'));
     } catch (Exception $e) {
-        echo json_encode(array('success' => false, 'message' => 'Lỗi: Mã phòng có thể đã tồn tại'));
+        echo json_encode(array('success' => false, 'message' => 'Lỗi: Không thể thêm phòng (Lỗi hệ thống)'));
     }
-    exit; // Dừng ngay sau khi xử lý JSON
+    exit; 
 }
 
 // --- PHẦN 2: XỬ LÝ QUẢN LÝ PHÒNG (TRANG QUẢN LÝ) ---
 
-// Kiểm tra đăng nhập
 if(!isset($_SESSION['user']) && !isset($_POST['action'])) {
-    header("Location: index.php");
     exit;
 }
 
 require_once dirname(__FILE__) . '/../model/PhongModel.php';
+// Cần kết nối DB ở đây để kiểm tra trùng lặp thủ công nếu Model chưa hỗ trợ
+require_once dirname(__FILE__) . '/../config/database.php';
+$db = new Database();
+$conn = $db->getConnection();
+
 $phongModel = new PhongModel(); 
 
-// Xử lý AJAX từ trang Quản lý Phòng
 if(isset($_POST['action'])){
     $action = $_POST['action'];
 
@@ -81,24 +96,51 @@ if(isset($_POST['action'])){
 
         if($soPhong === '') { echo json_encode(array('success'=>false,'message'=>'Số phòng rỗng')); exit; }
         
+        // RÀNG BUỘC 1: Giá > 0
+        if(!is_numeric($donGia) || $donGia <= 0){
+            echo json_encode(array('success'=>false,'message'=>'Giá phòng phải lớn hơn 0')); exit;
+        }
+
+        // RÀNG BUỘC 2: [MỚI] Kiểm tra trùng Số phòng
+        $stmtCheck = $conn->prepare("SELECT COUNT(*) FROM phong WHERE soPhong = ?");
+        $stmtCheck->execute(array($soPhong));
+        if ($stmtCheck->fetchColumn() > 0) {
+            echo json_encode(array('success' => false, 'message' => 'Lỗi: Số phòng ' . $soPhong . ' đã tồn tại!'));
+            exit;
+        }
+        
         $result = $phongModel->themPhong($soPhong, $tang, $hangPhong, $sucChua, $donGia);
         if($result) {
             echo json_encode(array('success'=>true,'message'=>'Thêm phòng thành công'));
         } else {
-            echo json_encode(array('success'=>false,'message'=>'Thêm thất bại (Trùng mã)'));
+            echo json_encode(array('success'=>false,'message'=>'Thêm thất bại (Lỗi hệ thống)'));
         }
         exit;
     }
 
     // Sửa phòng
     if($action == 'suaPhong') {
-        $maPhong = $_POST['maPhong'];
-        $soPhong = $_POST['soPhong'];
+        $maPhong = $_POST['maPhong']; // Mã phòng cũ (ID)
+        $soPhong = trim($_POST['soPhong']); // Số phòng mới (có thể người dùng sửa số)
         $tang = $_POST['tang'];
         $hangPhong = $_POST['hangPhong'];
         $sucChua = (int)$_POST['sucChua'];
         $donGia = $_POST['donGia'];
         
+        // RÀNG BUỘC 1: Giá > 0
+        if(!is_numeric($donGia) || $donGia <= 0){
+            echo json_encode(array('success'=>false,'message'=>'Giá phòng phải lớn hơn 0')); exit;
+        }
+
+        // RÀNG BUỘC 2: [MỚI] Kiểm tra trùng Số phòng (Trừ chính nó ra)
+        // Logic: Tìm xem có phòng nào KHÁC có cùng số phòng này không
+        $stmtCheck = $conn->prepare("SELECT COUNT(*) FROM phong WHERE soPhong = ? AND maPhong != ?");
+        $stmtCheck->execute(array($soPhong, $maPhong));
+        if ($stmtCheck->fetchColumn() > 0) {
+            echo json_encode(array('success' => false, 'message' => 'Lỗi: Số phòng ' . $soPhong . ' đã được sử dụng bởi phòng khác!'));
+            exit;
+        }
+
         if($phongModel->suaPhong($maPhong, $soPhong, $tang, $hangPhong, $sucChua, $donGia)) {
             echo json_encode(array('success'=>true,'message'=>'Cập nhật thành công'));
         } else {

@@ -30,8 +30,8 @@ class clsNhanPhong {
     }
     
     $search = "%" . $keyword . "%";
-     $exactSearch = $keyword;
     $stmt->bind_param("ssss", $search, $search, $search, $search);
+    
     if (!$stmt->execute()) {
         error_log("Lỗi execute SQL: " . $stmt->error);
         return array();

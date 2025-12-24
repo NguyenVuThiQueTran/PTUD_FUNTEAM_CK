@@ -1,66 +1,55 @@
 <?php
-// model/KhachHangModel.php
-
 require_once dirname(__FILE__) . '/../config/database.php';
 
 class KhachHangModel {
-    
     private $conn;
 
     public function __construct() {
-        $database = new Database();
-        // === SỬA LỖI CÚ PHÁP TẠI ĐÂY ===
-        $this->conn = $database->getConnection(); // Sửa $this. thành $this->
+        $db = new Database();
+        $this->conn = $db->getConnection();
     }
 
-    // Lấy danh sách
+    // --- SỬA LẠI HÀM NÀY ---
     public function getDanhSachKH() {
         try {
-            $stmt = $this->conn->query("SELECT idKH AS MaKH, hoTen AS HoTen, email AS Email, soDienThoai AS DienThoai FROM khachhang ORDER BY hoTen");
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return ($result === false) ? array() : $result;
+            // Dùng SELECT * để lấy hết các cột (bao gồm CCCD, idKH, hoTen, soDienThoai...)
+            $stmt = $this->conn->prepare("SELECT * FROM khachhang ORDER BY idKH DESC");
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch(PDOException $e) {
-            error_log("KhachHangModel::getDanhSachKH error: " . $e->getMessage());
             return array();
         }
     }
-    
-    // MỚI: Hàm Thêm khách hàng (Sử dụng tên cột đúng)
-    public function themKhachHang($hoTen, $email, $dienThoai) {
+
+    public function themKhachHang($hoTen, $email, $dienThoai, $cccd = '') {
         try {
-            // Sửa 'TenKH', 'SDT' thành 'HoTen', 'DienThoai'
-            $stmt = $this->conn->prepare("INSERT INTO khachhang (hoTen, email, soDienThoai) VALUES (?, ?, ?)");
-            if($stmt->execute(array($hoTen, $email, $dienThoai))) {
-                // Trả về ID mới để controller có thể dùng
+            // Thêm cột CCCD vào câu lệnh insert
+            $stmt = $this->conn->prepare("INSERT INTO khachhang (hoTen, email, soDienThoai, CCCD, loaiKH, trangThai, matKhau) VALUES (?, ?, ?, ?, 'Thuong', 'HoatDong', ?)");
+            // Mật khẩu mặc định 123456 (MD5)
+            $pass = md5('123456');
+            if($stmt->execute(array($hoTen, $email, $dienThoai, $cccd, $pass))) {
                 return $this->conn->lastInsertId();
             }
             return false;
         } catch(PDOException $e) {
-            error_log('themKhachHang error: ' . $e->getMessage());
             return false;
         }
     }
 
-    // MỚI: Hàm Sửa khách hàng (Sử dụng tên cột đúng)
-    public function suaKhachHang($maKH, $hoTen, $email, $dienThoai) {
+    public function suaKhachHang($maKH, $hoTen, $email, $dienThoai, $cccd = '') {
         try {
-            // Sử dụng tên cột chính xác theo database: hoTen, email, soDienThoai, idKH
-            $stmt = $this->conn->prepare("UPDATE khachhang SET hoTen=?, email=?, soDienThoai=? WHERE idKH=?");
-            return $stmt->execute(array($hoTen, $email, $dienThoai, $maKH));
+            $stmt = $this->conn->prepare("UPDATE khachhang SET hoTen=?, email=?, soDienThoai=?, CCCD=? WHERE idKH=?");
+            return $stmt->execute(array($hoTen, $email, $dienThoai, $cccd, $maKH));
         } catch(PDOException $e) {
-            error_log('suaKhachHang error: ' . $e->getMessage());
             return false;
         }
     }
 
-    // MỚI: Hàm Xóa khách hàng (Sử dụng tên cột đúng)
     public function xoaKhachHang($maKH) {
         try {
-            // Sử dụng idKH là khoá chính trong database
             $stmt = $this->conn->prepare("DELETE FROM khachhang WHERE idKH=?");
             return $stmt->execute(array($maKH));
         } catch(PDOException $e) {
-            error_log('xoaKhachHang error: ' . $e->getMessage());
             return false;
         }
     }

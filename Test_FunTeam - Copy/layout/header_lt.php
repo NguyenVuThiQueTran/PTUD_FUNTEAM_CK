@@ -204,11 +204,6 @@ if (isset($_GET['logout']) && $_GET['logout'] == 'true') {
                                 <i class="fas fa-door-closed me-1 fs-4 px-3"></i>Trả phòng cho khách
                             </a>
                         </li>
-                        <li class="nav-item mx-2">
-                            <a href="../view/phong/TraCuuPhong.php" class="nav-link text-white nav-menu-item">
-                                <i class="fas fa-door-open me-1 fs-4 px-3"></i>Đặt phòng
-                            </a>
-                        </li>
                     </ul>
                 </div>
 

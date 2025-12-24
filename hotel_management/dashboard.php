@@ -13,18 +13,29 @@ try {
     require_once dirname(__FILE__) . '/model/KhachHangModel.php';
     require_once dirname(__FILE__) . '/model/NhanVienModel.php';
     require_once dirname(__FILE__) . '/model/DichVuModel.php';
+    
+    // --- THÊM MODEL KHUYẾN MÃI ---
+   // Import Model Khuyến Mãi
+    if(file_exists(dirname(__FILE__) . '/model/KhuyenMaiModel.php')) {
+        require_once dirname(__FILE__) . '/model/KhuyenMaiModel.php';
+    }
 
     $phongModel = new PhongModel();
     $khModel = new KhachHangModel();
     $nvModel = new NhanVienModel();
     $dvModel = new DichVuModel();
+    // Khởi tạo model khuyến mãi
+    $kmModel = (class_exists('KhuyenMaiModel')) ? new KhuyenMaiModel() : null;
 
-    // 2. Lấy số liệu thống kê tổng quan (4 ô màu)
+    // 2. Lấy số liệu thống kê tổng quan (Thêm biến $totalKM)
     $listPhong = $phongModel->getDanhSachPhong();
     $totalPhong = count($listPhong);
     $totalKhach = count($khModel->getDanhSachKH());
     $totalNV = count($nvModel->getDanhSachNV());
     $totalDV = count($dvModel->getDanhSachDV());
+    
+    // Đếm số khuyến mãi
+    $totalKM = ($kmModel) ? count($kmModel->getDanhSachKM()) : 0;
 
     // 3. Kết nối DB để chạy các câu lệnh SQL phức tạp
     $db = new Database();
@@ -75,7 +86,6 @@ try {
     }
 
     // --- C. DỮ LIỆU BẢNG: ĐẶT PHÒNG GẦN ĐÂY ---
-    // Lấy 6 đơn mới nhất, Join bảng Khách hàng, Chi tiết, Phòng
     $sqlRecent = "SELECT kh.hoTen as HoTen, p.soPhong as SoPhong, p.hangPhong as HangPhong, 
                          ddp.ngayNhanPhong as NgayNhan, ddp.ngayTraPhong as NgayTra, 
                          ddp.trangThai as TrangThai, kh.soDienThoai as DienThoai
@@ -90,7 +100,6 @@ try {
     $recentBookings = $stmtRecent->fetchAll(PDO::FETCH_ASSOC);
 
     // --- D. DỮ LIỆU BẢNG: PHÒNG ĐANG CÓ KHÁCH ---
-    // Lấy các đơn có trạng thái 'DaNhan' hoặc 'DangO'
     $sqlOccupied = "SELECT kh.hoTen as HoTen, p.soPhong as SoPhong, p.hangPhong as HangPhong, 
                            ddp.ngayNhanPhong as NgayNhan, ddp.ngayTraPhong as NgayTra, 
                            ddp.trangThai as TrangThai, kh.soDienThoai as DienThoai
@@ -108,7 +117,7 @@ try {
     // --- E. DỮ LIỆU: CHECK-IN / CHECK-OUT HÔM NAY ---
     $todayChecks = array('checkIn' => array(), 'checkOut' => array());
     
-    // Check-in: Ngày nhận là hôm nay (CURDATE)
+    // Check-in
     $sqlIn = "SELECT kh.hoTen as HoTen, p.soPhong as SoPhong, ddp.ngayNhanPhong as Gio 
               FROM dondatphong ddp 
               LEFT JOIN khachhang kh ON ddp.idKH = kh.idKH 
@@ -119,7 +128,7 @@ try {
     $stmtIn->execute(); 
     $todayChecks['checkIn'] = $stmtIn->fetchAll(PDO::FETCH_ASSOC);
 
-    // Check-out: Ngày trả là hôm nay
+    // Check-out
     $sqlOut = "SELECT kh.hoTen as HoTen, p.soPhong as SoPhong, ddp.ngayTraPhong as Gio 
                FROM dondatphong ddp 
                LEFT JOIN khachhang kh ON ddp.idKH = kh.idKH 
@@ -131,8 +140,6 @@ try {
     $todayChecks['checkOut'] = $stmtOut->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (Exception $ex) {
-    // Nếu lỗi SQL, gán mảng rỗng để không bị lỗi giao diện
-    // error_log($ex->getMessage()); // Bật dòng này để xem lỗi trong log server
     $totalPhong = $totalKhach = $totalNV = $totalDV = 0;
     $revenueData = array_fill(0, 12, 0);
     $statPhong = array('DangO'=>0, 'DaDat'=>0, 'Trong'=>0, 'BaoTri'=>0);
@@ -151,6 +158,10 @@ switch ($page) {
     case 'nhanvien': include 'controller/nhanvienController.php'; break;
     case 'khachhang': include 'controller/khachhangController.php'; break;
     case 'dichvu': include 'controller/dichvuController.php'; break;
+    
+    // --- THÊM ROUTER KHUYẾN MÃI ---
+    case 'khuyenmai': include 'controller/khuyenmaiController.php'; break;
+    
     default: include 'view/dashboard_home.php'; break;
 }
 
